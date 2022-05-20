@@ -1,0 +1,12 @@
+.navigate-master ul {
+  margin: 0;
+  padding: 0;
+}
+
+.navigate-master ul li {
+  list-style: none;
+}
+
+.navigate-master ul li a {
+  display: block;
+}
