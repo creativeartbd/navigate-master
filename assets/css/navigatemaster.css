@@ -1,3 +1,7 @@
+.navigate-master {
+  z-index: 1;
+}
+
 .navigate-master ul {
   margin: 0;
   padding: 0;

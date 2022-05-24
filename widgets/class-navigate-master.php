@@ -36,6 +36,7 @@ class NavigateMaster extends Widget_Base {
 		parent::__construct( $data, $args );
 
 		wp_register_style( 'navigatemaster', plugins_url( '/assets/css/navigatemaster.css', ELEMENTOR_NAVIGATEMASTER ), array(), '1.0.0' );
+		wp_register_script( 'navigatemaster', plugins_url( '/assets/js/navigatemaster.js', ELEMENTOR_NAVIGATEMASTER ), '1.0.0', true );
 	}
 
 	/**
@@ -50,6 +51,11 @@ class NavigateMaster extends Widget_Base {
 	public function get_name() {
 		return 'navigatemaster';
 	}
+
+	public function get_script_depends() {
+		return [ 'navigatemaster' ];
+	}
+ 
 
 	/**
 	 * Retrieve the widget title.
@@ -181,29 +187,19 @@ class NavigateMaster extends Widget_Base {
 		);
 
 		$this->add_control(
-			'nm_color', [
-				'label' => esc_html__( 'Color', 'plugin-name' ),
-				'type' => \Elementor\Controls_Manager::COLOR,
-				'default' => esc_html__( '#000' , 'plugin-name' ),
-				'label_block' => true,
-				'selectors' => [
-					'{{WRAPPER}} .navigate-master ul li a' => 'color: {{VALUE}}',
-				],
-			]
-		);
-
-		$this->add_control(
 			'nm_bg_color', [
 				'label' => esc_html__( 'Hover Color', 'plugin-name' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
-				'default' => esc_html__( '#000' , 'plugin-name' ),
+				'default' => esc_html__( '#f00' , 'plugin-name' ),
 				'label_block' => true,
 				'selectors' => [
-					'{{WRAPPER}} .navigate-master ul li a:hover' => 'background-color: {{VALUE}}',
+					'{{WRAPPER}} .navigate-master ul li a:hover' => 'color: {{VALUE}} ',
+				],
+				'condition' => [
+					'nm_nm_title' => 'yes',
 				],
 			]
 		);
-
 
 		$this->add_group_control(
 			\Elementor\Group_Control_Background::get_type(),
@@ -212,11 +208,43 @@ class NavigateMaster extends Widget_Base {
 				'label' => esc_html__( 'Background', 'plugin-name' ),
 				'types' => [ 'classic', 'gradient', 'video' ],
 				'selector' => '{{WRAPPER}} .navigate-master ul li a',
+				'default' => esc_html__( '#ffb200' , 'plugin-name' ),
+				'condition' => [
+					'nm_nm_title' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Background::get_type(),
+			[
+				'name' => 'background_hover',
+				'label' => esc_html__( 'Background Hover', 'plugin-name' ),
+				'types' => [ 'classic', 'gradient', 'video' ],
+				'selector' => '{{WRAPPER}} .navigate-master ul li a:hover',
+				'default' => esc_html__( 'yellow' , 'plugin-name' ),
+				'condition' => [
+					'nm_nm_title' => '',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Background::get_type(),
+			[
+				'name' => 'background_active',
+				'label' => esc_html__( 'Background Active', 'plugin-name' ),
+				'types' => [ 'classic', 'gradient', 'video' ],
+				'selector' => '{{WRAPPER}} .navigate-master ul li.active a',
+				'default' => esc_html__( '#ffb200' , 'plugin-name' ),
+				'condition' => [
+					'nm_nm_title' => '',
+				],
 			]
 		);
 
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nm_margin',
 			[
 				'label' => esc_html__( 'Margin', 'plugin-name' ),
@@ -228,7 +256,7 @@ class NavigateMaster extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nm_padding',
 			[
 				'label' => esc_html__( 'Padding', 'plugin-name' ),
@@ -317,8 +345,8 @@ class NavigateMaster extends Widget_Base {
 					],
 				],
 				'default' => [
-					'unit' => '%',
-					'size' => 50,
+					'unit' => 'px',
+					'size' => 100,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .navigate-master ul li a' => 'width: {{SIZE}}{{UNIT}};',
@@ -344,8 +372,8 @@ class NavigateMaster extends Widget_Base {
 					],
 				],
 				'default' => [
-					'unit' => '%',
-					'size' => 50,
+					'unit' => 'px',
+					'size' => 30,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .navigate-master ul li a' => 'height: {{SIZE}}{{UNIT}};',
@@ -371,6 +399,7 @@ class NavigateMaster extends Widget_Base {
 					'absolute' => esc_html__( 'Absolute', 'plugin-name' ),
 					'fixed' => esc_html__( 'Fixed', 'plugin-name' ),
 				],
+				'default' => 'fixed',
 				'selectors' => [
 					'{{WRAPPER}} .navigate-master' => 'position: {{VALUE}};',
 				],
@@ -395,7 +424,7 @@ class NavigateMaster extends Widget_Base {
 					],
 				],
 				'default' => [
-					'unit' => '%',
+					'unit' => 'px',
 					'size' => 50,
 				],
 				'selectors' => [
@@ -422,8 +451,8 @@ class NavigateMaster extends Widget_Base {
 					],
 				],
 				'default' => [
-					'unit' => '%',
-					'size' => 50,
+					'unit' => 'px',
+					'size' => 150,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .navigate-master' => 'top: {{SIZE}}{{UNIT}};',
@@ -455,9 +484,6 @@ class NavigateMaster extends Widget_Base {
 
 		$lists = $settings['nm_list'];
 		$nm_nm_title = $settings['nm_nm_title'];
-		echo '<pre>';
-			 print_r( $nm_nm_title );
-		echo '</pre>';
 		?>
 
 		<div class="navigate-master">
@@ -467,16 +493,12 @@ class NavigateMaster extends Widget_Base {
 					if( 'yes' === $nm_nm_title ) {
 						echo "<li><a href='#".$list['nm_link']."'>".$list['nm_title']."</a></li>";
 					} else {
-						echo "<li><a href='#".$list['nm_link']."'></a></li>";
+						echo "<li><a href='#".$list['nm_link']."'>&nbsp;</a></li>";
 					}
 				}
 				?>
 			</ul>
 		</div>
-		
-		<h2 <?php echo $this->get_render_attribute_string( 'title' ); ?>><?php echo wp_kses( $settings['title'], array() ); ?></h2>
-		<div <?php echo $this->get_render_attribute_string( 'description' ); ?>><?php echo wp_kses( $settings['description'], array() ); ?></div>
-		<div <?php echo $this->get_render_attribute_string( 'content' ); ?>><?php echo wp_kses( $settings['content'], array('b', 'strong') ); ?></div>
 		<?php
 	}
 
