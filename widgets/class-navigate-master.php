@@ -327,7 +327,7 @@ class NavigateMaster extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nm_width',
 			[
 				'label' => esc_html__( 'Width', 'navigate-master' ),
@@ -354,7 +354,7 @@ class NavigateMaster extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nm_height',
 			[
 				'label' => esc_html__( 'Height', 'navigate-master' ),
@@ -389,7 +389,7 @@ class NavigateMaster extends Widget_Base {
 		);
 
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nv_position',
 			[
 				'type' => \Elementor\Controls_Manager::SELECT,
@@ -406,7 +406,7 @@ class NavigateMaster extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nm_position_right',
 			[
 				'label' => esc_html__( 'Right', 'navigate-master' ),
@@ -433,7 +433,7 @@ class NavigateMaster extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'nm_position_top',
 			[
 				'label' => esc_html__( 'Top', 'navigate-master' ),
